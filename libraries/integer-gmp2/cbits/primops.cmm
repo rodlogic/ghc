@@ -1,0 +1,29 @@
+#include "Cmm.h"
+
+import "integer-gmp2" integer_gmp_decode_double;
+
+#if SIZEOF_W == 4
+/* 32bit archs */
+# define WDS_I64 2
+#elif SIZEOF_W == 8
+/* 64bit archs */
+# define WDS_I64 1
+#else
+# error Unknown SIZEOF_W
+#endif
+
+/* :: Double# -> (# Int64#, Int# #) */
+integer_gmp_cmm_decode_double (D_ x)
+{
+  CInt exp;
+  I64  mant;
+  W_   mant_ptr;
+
+  STK_CHK_GEN_N (WDS(WDS_I64));
+  reserve WDS_I64 = mant_ptr {
+    (exp) = ccall integer_gmp_decode_double(x, mant_ptr "ptr");
+    mant = I64[mant_ptr];
+  }
+
+  return (mant, TO_W_(exp));
+}

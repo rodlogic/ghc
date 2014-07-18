@@ -1,0 +1,52 @@
+name:                integer-gmp2
+version:             0.0.1.0
+synopsis:            Natural number types backed by GMP
+license:             BSD3
+license-file:        LICENSE
+author:              Herbert Valerio Riedel
+maintainer:          hvr@gnu.org
+category:            Numeric, Algebra
+build-type:          Simple
+cabal-version:       >=1.10
+
+extra-source-files:
+    cbits/primops.cmm
+    cbits/wrappers.c
+
+library
+  default-language:    Haskell2010
+  other-extensions:
+    BangPatterns
+    CApiFFI
+    CPP
+    DeriveDataTypeable
+    ExplicitForAll
+    GHCForeignImportPrim
+    MagicHash
+    NegativeLiterals
+    NoImplicitPrelude
+    RebindableSyntax
+    StandaloneDeriving
+    UnboxedTuples
+    UnliftedFFITypes
+  build-depends:       ghc-prim
+  hs-source-dirs:      src/
+  ghc-options: -package-name integer-gmp2 -Wall
+  cc-options: -std=c99 -Wall
+
+  c-sources:
+    -- cbits/primops.cmm
+    cbits/wrappers.c
+
+  extra-libraries: gmp
+
+  exposed-modules:
+    GHC.Integer
+    GHC.Integer.Logarithms
+    GHC.Integer.Logarithms.Internals
+
+    GHC.Integer.GMP2.Internals
+
+  other-modules:
+    GHC.Integer.Type
+    -- GHC.Integer.GMP2.Impl.Util
