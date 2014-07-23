@@ -38,7 +38,7 @@ library
     -- cbits/primops.cmm
     cbits/wrappers.c
 
-  extra-libraries: gmp
+  extra-libraries: gmp m
 
   exposed-modules:
     GHC.Integer
