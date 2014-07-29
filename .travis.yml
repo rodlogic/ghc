@@ -24,13 +24,7 @@ install:
  - cabal install happy alex
 script:
  - echo 'V = 0' >> mk/validate.mk # otherwise we hit log file limits on travis.
- # do  not build docs
- - echo 'HADDOCK_DOCS       = NO' >> mk/validate.mk
- - echo 'BUILD_DOCBOOK_HTML = NO' >> mk/validate.mk
- - echo 'BUILD_DOCBOOK_PS   = NO' >> mk/validate.mk
- - echo 'BUILD_DOCBOOK_PDF  = NO' >> mk/validate.mk
  # do not build dynamic libraries
  - echo 'DYNAMIC_GHC_PROGRAMS = NO' >> mk/validate.mk
- - echo 'GhcLibWays = v' >> mk/validate.mk
  - if [ "$DEBUG_STAGE" = "YES" ]; then echo 'GhcStage2HcOpts += -DDEBUG' >> mk/validate.mk; fi
- - CPUS=2 SKIP_PERF_TESTS=YES PATH=~/.cabal/bin:$PATH ./validate --fast --no-dph
+ - CPUS=2 PATH=~/.cabal/bin:$PATH ./validate --fastest --no-dph

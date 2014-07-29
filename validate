@@ -20,6 +20,8 @@ Flags:
                     HTML generated here: testsuite/hpc_output/hpc_index.html
   --normal          Default settings
   --fast            Omit dyn way, omit binary distribution
+  --fastest         like --fast, but do not lint, do not run performance tests,
+                    do not build documentation
   --slow            Build stage2 with -DDEBUG.
                     2008-07-01: 14% slower than the default.
   --no-dph:         Skip building libraries/dph and running associated tests.
@@ -56,6 +58,9 @@ do
         ;;
     --slow)
         speed=SLOW
+        ;;
+    --fastest)
+        speed=FASTEST
         ;;
     --fast)
         speed=FAST
@@ -148,9 +153,9 @@ $make -j$threads
 check_packages post-build
 
 # -----------------------------------------------------------------------------
-# Build and test a binary distribution (not --fast)
+# Build and test a binary distribution (not --fast or --fastest)
 
-if [ $speed != "FAST" ]; then
+if [ $speed != "FAST" -a $speed != "FASTEST" ]; then
 
     $make binary-dist-prep
     $make test_bindist TEST_PREP=YES
@@ -184,6 +189,8 @@ then
     rm -f $HPCTIXFILE
 fi
 
+SKIP_PERF_TESTS=NO
+
 case "$speed" in
 SLOW)
         MAKE_TEST_TARGET=fulltest
@@ -197,9 +204,14 @@ FAST)
         MAKE_TEST_TARGET=test
         BINDIST="BINDIST=NO"
         ;;
+FASTEST)
+        MAKE_TEST_TARGET=test
+        BINDIST="BINDIST=NO"
+        SKIP_PERF_TESTS=YES
+        ;;
 esac
 
-$make $MAKE_TEST_TARGET stage=2 $BINDIST THREADS=$threads 2>&1 | tee testlog
+$make $MAKE_TEST_TARGET stage=2 $BINDIST SKIP_PERF_TESTS=$SKIP_PERF_TESTS THREADS=$threads 2>&1 | tee testlog
 
 check_packages post-testsuite
 

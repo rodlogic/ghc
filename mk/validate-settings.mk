@@ -5,7 +5,11 @@ WERROR              = -Werror
 SRC_CC_WARNING_OPTS =
 SRC_HC_WARNING_OPTS =
 
+ifneq "$(ValidateSpeed)" "FASTEST"
+HADDOCK_DOCS    = NO
+else
 HADDOCK_DOCS    = YES
+endif
 
 #####################
 # Warnings
@@ -39,12 +43,17 @@ utils/hpc_dist-install_EXTRA_HC_OPTS += -fwarn-tabs
 SRC_HC_OPTS     += -H64m -O0
 
 GhcStage1HcOpts += -O
-GhcStage2HcOpts += -O -dcore-lint
+GhcStage2HcOpts += -O
 # Using -O (rather than -O0) here bringes my validate down from 22mins to 16 mins.
 # Compiling stage2 takes longer, but we gain a faster haddock, faster
 # running of the tests, and faster building of the utils to be installed
 
-GhcLibHcOpts    += -O -dcore-lint
+GhcLibHcOpts    += -O
+
+ifneq "$(ValidateSpeed)" "FASTEST"
+GhcStage2HcOpts += -dcore-lint
+GhcLibHcOpts    += -dcore-lint
+endif
 
 # We define DefaultFastGhcLibWays in this style so that the value is
 # correct even if the user alters DYNAMIC_GHC_PROGRAMS.
@@ -53,7 +62,7 @@ GhcLibHcOpts    += -O -dcore-lint
 DefaultFastGhcLibWays = $(if $(filter $(DYNAMIC_GHC_PROGRAMS),YES),v dyn,v)
 DefaultProfGhcLibWays = $(if $(filter $(GhcProfiled),YES),p,)
 
-ifeq "$(ValidateSpeed)" "FAST"
+ifneq (,$(filter $(ValidateSpeed),FAST FASTEST))
 GhcLibWays     = $(DefaultFastGhcLibWays)
 else
 GhcLibWays     := $(filter v dyn,$(GhcLibWays))
@@ -74,6 +83,11 @@ InstallExtraPackages = YES
 # validating.
 BUILD_DOCBOOK_PS  = NO
 BUILD_DOCBOOK_PDF = NO
+ifneq "$(ValidateSpeed)" "FASTEST"
+BUILD_DOCBOOK_HTML = NO
+else
+BUILD_DOCBOOK_HTML = YES
+endif
 
 ifeq "$(ValidateHpc)" "YES"
 GhcStage2HcOpts += -fhpc -hpcdir $(TOP)/testsuite/hpc_output/
