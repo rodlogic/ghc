@@ -83,7 +83,7 @@ InstallExtraPackages = YES
 # validating.
 BUILD_DOCBOOK_PS  = NO
 BUILD_DOCBOOK_PDF = NO
-ifneq "$(ValidateSpeed)" "FASTEST"
+ifeq "$(ValidateSpeed)" "FASTEST"
 BUILD_DOCBOOK_HTML = NO
 else
 BUILD_DOCBOOK_HTML = YES
