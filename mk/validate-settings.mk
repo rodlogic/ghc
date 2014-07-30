@@ -5,7 +5,7 @@ WERROR              = -Werror
 SRC_CC_WARNING_OPTS =
 SRC_HC_WARNING_OPTS =
 
-ifneq "$(ValidateSpeed)" "FASTEST"
+ifeq "$(ValidateSpeed)" "FASTEST"
 HADDOCK_DOCS    = NO
 else
 HADDOCK_DOCS    = YES
